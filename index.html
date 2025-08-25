@@ -69,7 +69,7 @@
   </div>
 
   <!-- Submit Button -->
-  <button onclick="sendUTR()">Submit</button>
+  <button id="submitBtn">Submit</button>
 
   <!-- Attractive Payment Message -->
   <div class="payment-message">
@@ -81,10 +81,23 @@
   </div>
 
   <script>
+    document.getElementById("submitBtn").addEventListener("click", sendUTR);
+
     function sendUTR() {
       var utr = document.getElementById("utrNumber").value.trim();
       if(utr === "") {
         alert("Please enter your UTR number!");
+        return;
+      }
+
+      // Validate UTR (usually 12-16 digit number)
+      var utrPattern = /^[0-9]{12,16}$/;
+      if(!utrPattern.test(utr)) {
+        if(isNaN(utr)) {
+          alert("Please enter numbers only in UTR!");
+        } else {
+          alert("Please enter a valid 12-16 digit UTR number!");
+        }
         return;
       }
 
@@ -97,9 +110,9 @@
       // Open WhatsApp link in new tab
       window.open(url, "_blank");
 
-      // 15 seconds = 15000 milliseconds
+      // Redirect after 15 seconds
       setTimeout(function(){
-        window.location.href = "https://digitalportal.in/admin/panel.php
+        window.location.href = "https://digitalportal.in/admin/panel.php";
       }, 15000);
     }
   </script>
