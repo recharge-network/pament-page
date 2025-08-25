@@ -1,250 +1,185 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Manual e-Aadhaar Print (Front + Back)</title>
-<style>
-  :root{
-    --card-w: 320px;   /* कार्ड चौड़ाई */
-    --card-h: 200px;   /* कार्ड ऊँचाई */
-    --br: 12px;
-    --ink: #111;
-  }
-  *{box-sizing:border-box}
-  body{font-family: Arial, sans-serif; margin:16px; background:#f6f7fb; color:#111;}
-  h1{margin:0 0 12px; text-align:center}
-  .wrap{max-width:1080px; margin:0 auto; display:grid; gap:16px; grid-template-columns: 1fr 1fr;}
-  .panel{grid-column:1/-1; background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:14px; box-shadow:0 6px 18px rgba(0,0,0,.06);}
-  .form{display:grid; gap:10px; grid-template-columns: repeat(12,1fr);}
-  .form .f{grid-column: span 12;}
-  @media(min-width:860px){ .form .f6{grid-column: span 6;} .form .f4{grid-column: span 4;} .form .f3{grid-column: span 3;} }
-  label{font-size:12px; color:#334155}
-  input,select,textarea,button{width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:10px; background:#fff;}
-  textarea{min-height:60px; resize:vertical}
-  .row{display:flex; gap:10px; flex-wrap:wrap}
-  .btn{cursor:pointer; font-weight:600}
-  .btn.primary{background:#16a34a; color:#fff; border-color:#16a34a}
-  .btn.ghost{background:#fff}
-  .muted{color:#64748b; font-size:12px}
-
-  .cards{display:grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr)); gap:16px; align-items:start}
-  .card{
-    width:var(--card-w); height:var(--card-h);
-    background:#fff; border:1px solid #000; border-radius:var(--br);
-    padding:10px; position:relative; overflow:hidden;
-  }
-  .hdr{font-weight:bold; font-size:14px; text-align:center}
-  .photo{
-    position:absolute; right:10px; top:34px; width:84px; height:96px;
-    border:1px solid #000; border-radius:6px; overflow:hidden; background:#fafafa;
-    display:flex; align-items:center; justify-content:center; font-size:12px; color:#6b7280;
-  }
-  .photo img{width:100%; height:100%; object-fit:cover}
-  .det{font-size:12px; line-height:1.35; padding-right:98px; margin-top:6px}
-  .aadno{position:absolute; left:0; right:0; bottom:32px; text-align:center; font-size:18px; font-weight:bold; letter-spacing:1px}
-  .slogan{position:absolute; left:0; right:0; bottom:8px; text-align:center; font-size:11px; font-style:italic}
-  .qr{
-    width:92px; height:92px; border:1px solid #000; border-radius:6px; margin:10px auto 0;
-    display:flex; align-items:center; justify-content:center; font-size:12px; color:#6b7280; overflow:hidden; background:#fafafa;
-  }
-  .qr img{width:100%; height:100%; object-fit:contain}
-
-  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
-  .note{font-size:12px; color:#475569; background:#f1f5f9; border:1px dashed #cbd5e1; padding:8px 10px; border-radius:10px}
-
-  /* Print styles */
-  @media print{
-    body{margin:0; background:#fff}
-    .panel, .muted, .note{display:none !important}
-    .wrap{max-width:none}
-    .cards{gap:8px; grid-template-columns: repeat(2, var(--card-w)); justify-content:center}
-    .card{box-shadow:none; break-inside:avoid}
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Manual eAadhaar Print</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eee;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    form input, form textarea, form select, form button {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #cardArea {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .aadhaar-sheet {
+      width: 800px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+    }
+    .card {
+      width: 380px;
+      height: 240px;
+      border: 1px solid #000;
+      border-radius: 8px;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .strip {
+      height: 20px;
+      width: 100%;
+      display: flex;
+    }
+    .orange {background: #f68b1f; flex: 1;}
+    .white {background: #fff; flex: 1;}
+    .green {background: #138808; flex: 1;}
+    .photo {
+      width: 80px;
+      height: 90px;
+      border: 1px solid #000;
+      position: absolute;
+      top: 50px;
+      left: 15px;
+      background: #eee;
+      text-align: center;
+      line-height: 90px;
+      font-size: 12px;
+    }
+    .details {
+      margin-left: 110px;
+      margin-top: 50px;
+      font-size: 12px;
+      text-align: left;
+    }
+    .aadhaarno {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+      letter-spacing: 2px;
+    }
+    .slogan {
+      text-align: center;
+      font-size: 11px;
+      margin-top: 5px;
+      font-style: italic;
+    }
+    .qr {
+      width: 80px;
+      height: 80px;
+      border: 1px solid #000;
+      background: #eee;
+      text-align: center;
+      line-height: 80px;
+      font-size: 12px;
+      margin: 20px auto;
+    }
+    .address {
+      padding: 10px;
+      font-size: 12px;
+      text-align: left;
+    }
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      position: absolute;
+      bottom: 5px;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-  <h1>Manual e-Aadhaar Print (Front + Back)</h1>
+  <h1>Manual eAadhaar Print Portal</h1>
 
-  <div class="panel">
-    <div class="form">
-      <div class="f6">
-        <label>पूर्ण नाम / Full Name</label>
-        <input id="name" placeholder="उदाहरण: Rajesh Kumar" required>
-      </div>
-      <div class="f3">
-        <label>जन्मतिथि (DD/MM/YYYY)</label>
-        <input id="dob" placeholder="DD/MM/YYYY" required>
-      </div>
-      <div class="f3">
-        <label>लिंग / Gender</label>
-        <select id="gender">
-          <option>Male</option><option>Female</option><option>Other</option>
-        </select>
-      </div>
+  <!-- Input Form -->
+  <form id="aadhaarForm">
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="text" id="dob" placeholder="Date of Birth (DD/MM/YYYY)" required>
+    <select id="gender">
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+    <textarea id="address" placeholder="Full Address" required></textarea>
+    <input type="text" id="aadhaar" placeholder="Aadhaar Number (XXXX XXXX XXXX)" required>
+    <button type="button" onclick="generateCard()">Preview Aadhaar</button>
+  </form>
 
-      <div class="f">
-        <label>पता / Address</label>
-        <textarea id="address" placeholder="गाँव/शहर, जिला, राज्य, पिनकोड" required></textarea>
-      </div>
-
-      <div class="f6">
-        <label>आधार नंबर (फॉर्मेट: XXXX XXXX XXXX)</label>
-        <input id="aadhaar" maxlength="14" placeholder="XXXX XXXX XXXX" oninput="formatAadhaar(this)" required>
-      </div>
-      <div class="f3">
-        <label>फोटो अपलोड</label>
-        <input id="photo" type="file" accept="image/*">
-      </div>
-      <div class="f3">
-        <label>QR अपलोड (e-Aadhaar/PVC से crop)</label>
-        <input id="qr" type="file" accept="image/*">
-      </div>
-
-      <div class="f row">
-        <button class="btn primary" type="button" onclick="makePreview()">Preview बनाओ</button>
-        <button class="btn ghost" type="button" onclick="window.print()">Print / Save PDF</button>
-        <button class="btn ghost" type="button" onclick="resetAll()">Reset</button>
-      </div>
-
-      <div class="f note">
-        ⚠️ यह सिर्फ़ **मैन्युअल टेम्पलेट** है। असली डेटा ग्राहक के e-Aadhaar / DigiLocker / PVC से लें।
-        पूरा आधार नंबर स्टोर/सेव न करें; चाहें तो केवल **अंतिम 4 अंक** दिखाएँ।
-      </div>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <div class="cards">
-      <!-- FRONT -->
-      <div class="card" id="front">
-        <div class="hdr">Government of India</div>
-        <div class="photo" id="phWrap">Photo</div>
-        <div class="det">
-          <p><b>Name:</b> <span id="p_name">—</span></p>
-          <p><b>DOB:</b> <span id="p_dob">—</span></p>
-          <p><b>Gender:</b> <span id="p_gender">—</span></p>
-          <p><b>Address:</b> <span id="p_address">—</span></p>
+  <!-- Aadhaar Card Preview -->
+  <div id="cardArea">
+    <div class="aadhaar-sheet">
+      
+      <!-- Front Side -->
+      <div class="card">
+        <div class="strip">
+          <div class="orange"></div>
+          <div class="white"></div>
+          <div class="green"></div>
         </div>
-        <div class="aadno" id="p_aadhaar">XXXX XXXX XXXX</div>
+        <div class="photo">Photo</div>
+        <div class="details">
+          <p><b>Name:</b> <span id="p_name"></span></p>
+          <p><b>DOB:</b> <span id="p_dob"></span></p>
+          <p><b>Gender:</b> <span id="p_gender"></span></p>
+        </div>
+        <div class="aadhaarno" id="p_aadhaar"></div>
         <div class="slogan">आधार - आम आदमी का अधिकार</div>
       </div>
 
-      <!-- BACK -->
-      <div class="card" id="back">
-        <div class="hdr">Unique Identification Authority of India</div>
-        <div class="qr" id="qrWrap">QR</div>
-        <div style="text-align:center; margin-top:6px; font-size:12px;">
+      <!-- Back Side -->
+      <div class="card">
+        <div class="strip">
+          <div class="orange"></div>
+          <div class="white"></div>
+          <div class="green"></div>
+        </div>
+        <div class="qr">QR</div>
+        <div class="address">
+          <b>Address:</b><br>
+          <span id="p_address"></span>
+        </div>
+        <div class="footer">
           Helpline: 1947 | www.uidai.gov.in
         </div>
       </div>
+
     </div>
+    <p style="text-align:center; margin-top:15px;">
+      <button onclick="window.print()">Download / Print</button>
+    </p>
   </div>
 
-<script>
-  // --- Helpers ---
-  function formatAadhaar(el){
-    // Keep digits only, group 4-4-4
-    let v = el.value.replace(/\D/g,'').slice(0,12);
-    el.value = v.replace(/(.{4})/g,'$1 ').trim();
-  }
-  function readImage(file, maxW=1200, maxH=1200){
-    return new Promise((resolve,reject)=>{
-      if(!file) return resolve(null);
-      const fr = new FileReader();
-      fr.onload = () => {
-        const img = new Image();
-        img.onload = () => {
-          // downscale to keep page light
-          const w = img.width, h = img.height;
-          let nw = w, nh = h;
-          const r = Math.min(maxW / w, maxH / h, 1);
-          nw = Math.round(w * r); nh = Math.round(h * r);
-          const c = document.createElement('canvas');
-          c.width = nw; c.height = nh;
-          const ctx = c.getContext('2d');
-          ctx.drawImage(img,0,0,nw,nh);
-          resolve(c.toDataURL('image/png'));
-        };
-        img.onerror = () => resolve(null);
-        img.src = fr.result;
-      };
-      fr.onerror = reject;
-      fr.readAsDataURL(file);
-    });
-  }
-
-  function maskAadhaarShown(raw){
-    // Option: show full or last-4 only. Here we keep what user typed.
-    return raw && raw.trim() ? raw.trim() : 'XXXX XXXX XXXX';
-  }
-
-  async function makePreview(){
-    // Read inputs
-    const name = document.getElementById('name').value.trim();
-    const dob = document.getElementById('dob').value.trim();
-    const gender = document.getElementById('gender').value.trim();
-    const address = document.getElementById('address').value.trim();
-    const aadhaar = document.getElementById('aadhaar').value.trim();
-
-    // Push to preview
-    document.getElementById('p_name').textContent = name || '—';
-    document.getElementById('p_dob').textContent = dob || '—';
-    document.getElementById('p_gender').textContent = gender || '—';
-    document.getElementById('p_address').textContent = address || '—';
-    document.getElementById('p_aadhaar').textContent = maskAadhaarShown(aadhaar);
-
-    // Images
-    const phFile = document.getElementById('photo').files[0];
-    const qrFile = document.getElementById('qr').files[0];
-
-    const phData = await readImage(phFile, 800, 800);
-    const qrData = await readImage(qrFile, 800, 800);
-
-    const phWrap = document.getElementById('phWrap');
-    const qrWrap = document.getElementById('qrWrap');
-
-    // Photo
-    phWrap.innerHTML = '';
-    if(phData){
-      const img = new Image();
-      img.src = phData; img.alt = 'Photo';
-      phWrap.appendChild(img);
-    } else {
-      phWrap.textContent = 'Photo';
+  <script>
+    function generateCard() {
+      document.getElementById("p_name").innerText = document.getElementById("name").value;
+      document.getElementById("p_dob").innerText = document.getElementById("dob").value;
+      document.getElementById("p_gender").innerText = document.getElementById("gender").value;
+      document.getElementById("p_address").innerText = document.getElementById("address").value;
+      document.getElementById("p_aadhaar").innerText = document.getElementById("aadhaar").value;
+      document.getElementById("cardArea").style.display = "block";
     }
-
-    // QR
-    qrWrap.innerHTML = '';
-    if(qrData){
-      const img = new Image();
-      img.src = qrData; img.alt = 'QR';
-      qrWrap.appendChild(img);
-    } else {
-      qrWrap.textContent = 'QR';
-    }
-
-    // Scroll to cards for quick check
-    document.getElementById('front').scrollIntoView({behavior:'smooth', block:'center'});
-  }
-
-  function resetAll(){
-    document.getElementById('name').value = '';
-    document.getElementById('dob').value = '';
-    document.getElementById('gender').value = 'Male';
-    document.getElementById('address').value = '';
-    document.getElementById('aadhaar').value = '';
-    document.getElementById('photo').value = '';
-    document.getElementById('qr').value = '';
-    document.getElementById('p_name').textContent = '—';
-    document.getElementById('p_dob').textContent = '—';
-    document.getElementById('p_gender').textContent = '—';
-    document.getElementById('p_address').textContent = '—';
-    document.getElementById('p_aadhaar').textContent = 'XXXX XXXX XXXX';
-    document.getElementById('phWrap').textContent = 'Photo';
-    document.getElementById('qrWrap').textContent = 'QR';
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-</script>
+  </script>
 </body>
 </html>
