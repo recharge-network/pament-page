@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR UTR Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background-color: #f2f2f2;
+    }
+    img {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 10px;
+      width: 250px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      background-color: #25D366;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #128C7E;
+    }
+    .payment-message {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #e6f0ff;
+      border: 2px solid #3399ff;
+      border-radius: 8px;
+    }
+    .payment-message p {
+      color: #0044cc;
+      margin: 5px 0;
+    }
+    .payment-message .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .payment-message .details {
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Scan QR & Submit UTR</h2>
+  
+  <!-- QR Code -->
+  <img src="https://i.ibb.co/G4ZR3kxw/IMG-20250825-105135.jpg" alt="QR Code">
+
+  <!-- UTR Input -->
+  <div>
+    <input type="text" id="utrNumber" placeholder="Enter UTR number / Mobile number">
+  </div>
+
+  <!-- Submit Button -->
+  <button onclick="sendUTR()">Submit</button>
+
+  <!-- Attractive Payment Message -->
+  <div class="payment-message">
+    <p class="title">🎉 Apni Service turant activate karein!</p>
+    <p class="details">
+      Service ko activate karne ke liye sirf ₹599 ka payment karein aur apna <strong>UTR number</strong> uper box me dalen.<br>
+      💳 Jaldi karein aur apna account turant live karein!
+    </p>
+  </div>
+
+  <script>
+    function sendUTR() {
+      var utr = document.getElementById("utrNumber").value.trim();
+      if(utr === "") {
+        alert("Please enter your UTR number!");
+        return;
+      }
+
+      // WhatsApp number
+      var whatsappNumber = "917318432028"; 
+
+      // WhatsApp URL
+      var url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent("UTR/UPI Number: " + utr + "\nUPI ID: mab0450552a0265015@yesbank");
+      
+      // Open WhatsApp link in new tab
+      window.open(url, "_blank");
+
+      // 15 seconds = 15000 milliseconds
+      setTimeout(function(){
+        window.location.href = "https://digitalportal.in/admin/panel.php
+      }, 15000);
+    }
+  </script>
+
+</body>
+</html>
