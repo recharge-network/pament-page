@@ -1,234 +1,138 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Sample Aadhaar-style Print (SAMPLE ONLY)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manual e-Aadhaar Print</title>
 <style>
-  *{box-sizing:border-box}
-  body{font-family:Arial,Helvetica,sans-serif;background:#f3f4f6;padding:18px;color:#0b1220}
-  h1{text-align:center;margin:8px 0 12px}
-  .panel{max-width:1120px;margin:0 auto;background:#fff;padding:12px;border-radius:10px;border:1px solid #e6edf3}
-  label{display:block;font-size:13px;color:#334155;margin-bottom:6px}
-  input[type="text"], textarea, select {width:100%;padding:9px;border-radius:8px;border:1px solid #cbd5e1}
-  textarea{min-height:72px;resize:vertical}
-  input[type=file]{padding:6px}
+  body{font-family:Arial,Helvetica,sans-serif;background:#f3f4f6;margin:20px;color:#0f172a}
+  h1{text-align:center;margin-bottom:14px}
+  .panel{background:#fff;padding:14px;border-radius:10px;max-width:1000px;margin:0 auto 18px;box-shadow:0 4px 14px rgba(0,0,0,0.08)}
+  label{display:block;font-size:13px;margin-bottom:4px;color:#334155}
+  input,textarea,select{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:14px}
+  textarea{min-height:70px}
+  input[type=file]{padding:4px}
   .row{display:flex;gap:10px;flex-wrap:wrap}
   .col{flex:1;min-width:160px}
-  .btn{padding:10px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
-  .btn.primary{background:#0b7a4d;color:#fff}
+  .btn{padding:10px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:bold}
+  .btn.primary{background:#15803d;color:#fff}
   .btn.alt{background:#fff;border:1px solid #cbd5e1}
-  .note{font-size:13px;color:#475569;padding:8px;border-radius:8px;background:#f8fafc;border:1px dashed #e2e8f0;margin-top:10px}
+  .note{font-size:12px;color:#475569;margin-top:6px}
 
-  /* Sheet (A4-ish preview) */
-  .sheet {width: 100%; max-width:840px; margin:18px auto; display:flex; gap:16px; justify-content:center}
-  .card {width:390px;height:245px;border-radius:8px;background:#fff;border:1px solid #0b1220;position:relative;overflow:hidden;box-shadow:0 8px 20px rgba(2,6,23,0.06)}
+  /* Sheet layout */
+  .sheet{display:flex;gap:20px;justify-content:center;max-width:900px;margin:0 auto}
+  .card{width:400px;height:250px;border:1px solid #0f172a;border-radius:8px;position:relative;background:#fff;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
   .tricolor{height:22px;display:flex}
-  .tri1{flex:1;background:#f68b1f} .tri2{flex:1;background:#fff} .tri3{flex:1;background:#138808}
+  .tri1{flex:1;background:#ff9933}.tri2{flex:1;background:#fff}.tri3{flex:1;background:#138808}
 
-  /* watermark so it's clear not official */
-  .watermark{
-    position:absolute;left:0;right:0;top:40%;text-align:center;
-    font-size:16px;color:rgba(0,0,0,0.08);font-weight:800;letter-spacing:2px;pointer-events:none;transform:rotate(-18deg)
-  }
+  /* Front */
+  .front .info{padding:10px 14px 10px 14px;padding-right:120px;font-size:13px}
+  .front .info p{margin:6px 0}
+  .front .photo{position:absolute;right:14px;top:40px;width:95px;height:115px;border:1px solid #0f172a;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f8fafc;color:#64748b}
+  .front .photo img{width:100%;height:100%;object-fit:cover}
+  .aadno{position:absolute;left:0;right:0;bottom:38px;text-align:center;font-weight:800;font-size:18px;letter-spacing:2px}
+  .slogan{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:12px;color:#b91c1c;font-weight:bold}
 
-  /* FRONT specifics (we'll put QR on front by user's last request) */
-  .front .logoRow{padding:8px 12px}
-  .front .title{font-weight:800;font-size:14px;color:#0b1220}
-  .front .qrBox{width:120px;height:120px;border:1px solid #0b1220;border-radius:6px;margin:12px auto;background:#fafafa;display:flex;align-items:center;justify-content:center;color:#64748b}
-  .front .info{padding:8px 14px;font-size:13px}
-  .front .info b{display:inline-block;width:86px}
+  /* Back */
+  .back .qr{position:absolute;left:14px;top:50px;width:110px;height:110px;border:1px solid #0f172a;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f8fafc;color:#64748b}
+  .back .qr img{max-width:100%;max-height:100%}
+  .back .address{position:absolute;right:14px;top:50px;width:240px;font-size:13px;line-height:1.35}
+  .back .meta{position:absolute;left:0;right:0;bottom:10px;text-align:center;font-size:11px;color:#475569}
 
-  /* BACK specifics (photo + address + aadhaar no bottom) */
-  .back .photoBox{position:absolute;right:14px;top:56px;width:100px;height:118px;border:1px solid #0b1220;border-radius:6px;background:#fafafa;display:flex;align-items:center;justify-content:center;color:#64748b;overflow:hidden}
-  .back .photoBox img{width:100%;height:100%;object-fit:cover}
-  .back .addr{padding:14px;font-size:13px;line-height:1.35}
-  .back .aadno{position:absolute;left:0;right:0;bottom:26px;text-align:center;font-weight:800;font-size:17px;letter-spacing:2px}
-  .back .meta{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:11px;color:#475569}
-
-  /* Print */
   @media print{
     body{background:#fff}
-    .panel,.note{display:none}
-    .sheet{max-width:100%;margin:0;justify-content:center}
+    .panel{display:none}
+    .sheet{margin:0;gap:20px}
     @page{size:A4 landscape;margin:12mm}
-    .card{box-shadow:none;border-color:#000}
+    .card{box-shadow:none}
   }
 </style>
 </head>
 <body>
+  <h1>Manual e-Aadhaar Print</h1>
+
   <div class="panel">
-    <h1>Sample Aadhaar-style Print — <span style="color:#ef4444">SAMPLE ONLY</span></h1>
-
-    <div class="row" style="gap:12px">
-      <div class="col">
-        <label>Full Name</label>
-        <input id="name" type="text" placeholder="Rajesh Kumar">
-      </div>
-      <div style="width:160px">
-        <label>DOB (DD/MM/YYYY)</label>
-        <input id="dob" type="text" placeholder="01/01/1970">
-      </div>
-      <div style="width:140px">
-        <label>Gender</label>
-        <select id="gender"><option>Male</option><option>Female</option><option>Other</option></select>
-      </div>
+    <div class="row">
+      <div class="col"><label>Full Name</label><input id="name" type="text" placeholder="Rajesh Kumar"></div>
+      <div class="col"><label>DOB</label><input id="dob" type="text" placeholder="01/01/1990"></div>
+      <div class="col"><label>Gender</label><select id="gender"><option>Male</option><option>Female</option><option>Other</option></select></div>
     </div>
-
-    <div style="margin-top:10px">
-      <label>Address</label>
-      <textarea id="address" placeholder="Village/City, District, State, PIN"></textarea>
-    </div>
-
     <div class="row" style="margin-top:10px">
-      <div class="col">
-        <label>Aadhaar Number (or last 4)</label>
-        <input id="aad" type="text" placeholder="1234 5678 9012" oninput="this.value=this.value.replace(/[^0-9\s]/g,'').slice(0,14)">
-      </div>
-      <div style="width:220px">
-        <label>Upload Photo (for back)</label>
-        <input id="photo" type="file" accept="image/*">
-      </div>
-      <div style="width:220px">
-        <label>Upload QR (for front)</label>
-        <input id="qr" type="file" accept="image/*">
-      </div>
+      <div class="col"><label>Aadhaar Number</label><input id="aad" type="text" maxlength="14" placeholder="1234 5678 9012" oninput="formatAad(this)"></div>
     </div>
-
-    <div style="margin-top:12px;display:flex;gap:8px">
+    <div style="margin-top:10px"><label>Address</label><textarea id="address" placeholder="House no, Street, City, State - PIN"></textarea></div>
+    <div class="row" style="margin-top:10px">
+      <div class="col"><label>Upload Photo</label><input id="photo" type="file" accept="image/*"></div>
+      <div class="col"><label>Upload QR</label><input id="qr" type="file" accept="image/*"></div>
+    </div>
+    <div class="row" style="margin-top:14px">
       <button class="btn primary" onclick="build()">Preview</button>
-      <button class="btn alt" onclick="window.print()">Print / Save as PDF</button>
+      <button class="btn alt" onclick="window.print()">Print / Save PDF</button>
       <button class="btn alt" onclick="resetAll()">Reset</button>
     </div>
-
-    <div class="note">इश्यू/प्रिंट केवल ग्राहक की सुविधा के लिए — <strong>यह आधिकारिक दस्तावेज़ नहीं है</strong>. किसी भी आधिकारिक काम में केवल UIDAI से जारी दस्तावज़ इस्तेमाल करें।</div>
+    <div class="note">Note: यह टेम्पलेट केवल मैन्युअल प्रिंट सुविधा के लिए है, यह UIDAI द्वारा जारी आधिकारिक Aadhaar नहीं है।</div>
   </div>
 
-  <!-- Sheet: Left = Front (with QR), Right = Back (with Photo + Address + Aadhaar no bottom) -->
-  <div class="sheet" id="sheet" aria-hidden="true" style="margin-top:18px">
-    <!-- FRONT -->
-    <div class="card front" id="frontCard">
+  <div class="sheet" id="sheet" aria-hidden="true">
+    <!-- Front -->
+    <div class="card front">
       <div class="tricolor"><div class="tri1"></div><div class="tri2"></div><div class="tri3"></div></div>
-      <div class="watermark">SAMPLE — NOT AN OFFICIAL DOCUMENT</div>
-
-      <div class="logoRow" style="padding:10px 12px">
-        <div style="font-weight:800;font-size:14px">Unique Identity (SAMPLE)</div>
-      </div>
-
-      <div style="padding:6px 14px 0">
-        <div class="qrBox" id="qrBox">QR</div>
-      </div>
-
-      <div class="info" style="padding-top:6px">
+      <div class="info">
         <p><b>Name:</b> <span id="v_name">—</span></p>
         <p><b>DOB:</b> <span id="v_dob">—</span></p>
         <p><b>Gender:</b> <span id="v_gender">—</span></p>
       </div>
-
-      <div style="position:absolute;left:12px;bottom:46px;font-size:12px;color:#475569;padding-right:120px">
-        <div style="font-size:11px">Note: This is a customer copy (SAMPLE)</div>
-      </div>
-
-    </div>
-
-    <!-- BACK -->
-    <div class="card back" id="backCard">
-      <div class="tricolor"><div class="tri1"></div><div class="tri2"></div><div class="tri3"></div></div>
-      <div class="watermark">SAMPLE — NOT AN OFFICIAL DOCUMENT</div>
-
-      <div class="photoBox" id="photoBox">Photo</div>
-
-      <div class="addr" id="v_address"><strong>Address</strong><br>—</div>
-
+      <div class="photo" id="photoBox">Photo</div>
       <div class="aadno" id="v_aad">XXXX XXXX XXXX</div>
+      <div class="slogan">आधार - आम आदमी का अधिकार</div>
+    </div>
+    <!-- Back -->
+    <div class="card back">
+      <div class="tricolor"><div class="tri1"></div><div class="tri2"></div><div class="tri3"></div></div>
+      <div class="qr" id="qrBox">QR</div>
+      <div class="address" id="v_address"><strong>Address</strong><br>—</div>
       <div class="meta">Helpline: 1947 | www.uidai.gov.in</div>
     </div>
   </div>
 
 <script>
-  // helper: load image file to dataURL scaled
-  function toDataURL(file, maxW=1200, maxH=1200){
-    return new Promise((res)=> {
-      if(!file) return res(null);
-      const fr=new FileReader();
-      fr.onload = ()=> {
-        const img=new Image();
-        img.onload = ()=>{
-          const ratio = Math.min(maxW/img.width, maxH/img.height, 1);
-          const w=Math.round(img.width*ratio), h=Math.round(img.height*ratio);
-          const c=document.createElement('canvas'); c.width=w; c.height=h;
-          const ctx=c.getContext('2d'); ctx.drawImage(img,0,0,w,h);
-          res(c.toDataURL('image/png'));
-        };
-        img.onerror = ()=> res(null);
-        img.src = fr.result;
+function formatAad(el){
+  let v = el.value.replace(/\D/g,'').slice(0,12);
+  el.value = v.replace(/(\d{4})(\d{1,4})?(\d{1,4})?/,function(_,a,b,c){return [a,b,c].filter(Boolean).join(' ')});
+}
+function toDataURL(file,maxW=600,maxH=600){
+  return new Promise(res=>{
+    if(!file) return res(null);
+    const fr=new FileReader();
+    fr.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const ratio=Math.min(maxW/img.width,maxH/img.height,1);
+        const c=document.createElement('canvas');c.width=img.width*ratio;c.height=img.height*ratio;
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        res(c.toDataURL('image/png'));
       };
-      fr.onerror = ()=> res(null);
-      fr.readAsDataURL(file);
-    });
-  }
+      img.src=fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+async function build(){
+  document.getElementById('v_name').textContent=document.getElementById('name').value||'—';
+  document.getElementById('v_dob').textContent=document.getElementById('dob').value||'—';
+  document.getElementById('v_gender').textContent=document.getElementById('gender').value||'—';
+  document.getElementById('v_aad').textContent=document.getElementById('aad').value||'XXXX XXXX XXXX';
+  document.getElementById('v_address').innerHTML='<strong>Address</strong><br>'+ (document.getElementById('address').value.replace(/\n/g,'<br>')||'—');
 
-  async function build(){
-    const name = document.getElementById('name').value.trim() || '—';
-    const dob = document.getElementById('dob').value.trim() || '—';
-    const gender = document.getElementById('gender').value || '—';
-    const address = document.getElementById('address').value.trim() || '—';
-    const aad = document.getElementById('aad').value.trim() || 'XXXX XXXX XXXX';
-    const pfile = document.getElementById('photo').files[0];
-    const qfile = document.getElementById('qr').files[0];
-
-    document.getElementById('v_name').textContent = name;
-    document.getElementById('v_dob').textContent = dob;
-    document.getElementById('v_gender').textContent = gender;
-    document.getElementById('v_address').innerHTML = '<strong>Address</strong><br>' + (address==='—' ? '—' : escapeHtml(address).replace(/\n/g,'<br>'));
-    document.getElementById('v_aad').textContent = aad;
-
-    const psrc = await toDataURL(pfile, 800, 800);
-    const qsrc = await toDataURL(qfile, 900, 900);
-
-    const photoBox = document.getElementById('photoBox');
-    photoBox.innerHTML = '';
-    if(psrc){
-      const img = new Image(); img.src = psrc; img.alt='photo'; photoBox.appendChild(img);
-    } else {
-      photoBox.textContent = 'Photo';
-    }
-
-    const qrBox = document.getElementById('qrBox');
-    qrBox.innerHTML = '';
-    if(qsrc){
-      const img2=new Image(); img2.src=qsrc; img2.alt='qr'; img2.style.maxWidth='100%'; img2.style.maxHeight='100%'; qrBox.appendChild(img2);
-    } else {
-      qrBox.textContent = 'QR';
-    }
-
-    // show sheet for print
-    document.getElementById('sheet').removeAttribute('aria-hidden');
-    document.getElementById('sheet').scrollIntoView({behavior:'smooth'});
-  }
-
-  function resetAll(){
-    document.getElementById('name').value='';
-    document.getElementById('dob').value='';
-    document.getElementById('gender').value='Male';
-    document.getElementById('address').value='';
-    document.getElementById('aad').value='';
-    document.getElementById('photo').value='';
-    document.getElementById('qr').value='';
-    document.getElementById('v_name').textContent='—';
-    document.getElementById('v_dob').textContent='—';
-    document.getElementById('v_gender').textContent='—';
-    document.getElementById('v_address').innerHTML='<strong>Address</strong><br>—';
-    document.getElementById('v_aad').textContent='XXXX XXXX XXXX';
-    document.getElementById('photoBox').textContent='Photo';
-    document.getElementById('qrBox').textContent='QR';
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-
-  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-
-  // initial hide
-  document.getElementById('sheet').setAttribute('aria-hidden','true');
+  const pfile=document.getElementById('photo').files[0];
+  const qfile=document.getElementById('qr').files[0];
+  const psrc=await toDataURL(pfile); const qsrc=await toDataURL(qfile);
+  const pb=document.getElementById('photoBox');pb.innerHTML=''; if(psrc){let i=new Image();i.src=psrc;pb.appendChild(i)}else{pb.textContent='Photo'}
+  const qb=document.getElementById('qrBox');qb.innerHTML=''; if(qsrc){let i=new Image();i.src=qsrc;qb.appendChild(i)}else{qb.textContent='QR'}
+  document.getElementById('sheet').removeAttribute('aria-hidden');
+  document.getElementById('sheet').scrollIntoView({behavior:'smooth'});
+}
+function resetAll(){window.location.reload();}
 </script>
 </body>
 </html>
