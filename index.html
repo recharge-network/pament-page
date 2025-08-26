@@ -1,138 +1,52 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Manual e-Aadhaar Print</title>
-<style>
-  body{font-family:Arial,Helvetica,sans-serif;background:#f3f4f6;margin:20px;color:#0f172a}
-  h1{text-align:center;margin-bottom:14px}
-  .panel{background:#fff;padding:14px;border-radius:10px;max-width:1000px;margin:0 auto 18px;box-shadow:0 4px 14px rgba(0,0,0,0.08)}
-  label{display:block;font-size:13px;margin-bottom:4px;color:#334155}
-  input,textarea,select{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:14px}
-  textarea{min-height:70px}
-  input[type=file]{padding:4px}
-  .row{display:flex;gap:10px;flex-wrap:wrap}
-  .col{flex:1;min-width:160px}
-  .btn{padding:10px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:bold}
-  .btn.primary{background:#15803d;color:#fff}
-  .btn.alt{background:#fff;border:1px solid #cbd5e1}
-  .note{font-size:12px;color:#475569;margin-top:6px}
-
-  /* Sheet layout */
-  .sheet{display:flex;gap:20px;justify-content:center;max-width:900px;margin:0 auto}
-  .card{width:400px;height:250px;border:1px solid #0f172a;border-radius:8px;position:relative;background:#fff;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
-  .tricolor{height:22px;display:flex}
-  .tri1{flex:1;background:#ff9933}.tri2{flex:1;background:#fff}.tri3{flex:1;background:#138808}
-
-  /* Front */
-  .front .info{padding:10px 14px 10px 14px;padding-right:120px;font-size:13px}
-  .front .info p{margin:6px 0}
-  .front .photo{position:absolute;right:14px;top:40px;width:95px;height:115px;border:1px solid #0f172a;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f8fafc;color:#64748b}
-  .front .photo img{width:100%;height:100%;object-fit:cover}
-  .aadno{position:absolute;left:0;right:0;bottom:38px;text-align:center;font-weight:800;font-size:18px;letter-spacing:2px}
-  .slogan{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:12px;color:#b91c1c;font-weight:bold}
-
-  /* Back */
-  .back .qr{position:absolute;left:14px;top:50px;width:110px;height:110px;border:1px solid #0f172a;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f8fafc;color:#64748b}
-  .back .qr img{max-width:100%;max-height:100%}
-  .back .address{position:absolute;right:14px;top:50px;width:240px;font-size:13px;line-height:1.35}
-  .back .meta{position:absolute;left:0;right:0;bottom:10px;text-align:center;font-size:11px;color:#475569}
-
-  @media print{
-    body{background:#fff}
-    .panel{display:none}
-    .sheet{margin:0;gap:20px}
-    @page{size:A4 landscape;margin:12mm}
-    .card{box-shadow:none}
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>UPI Payment & UTR Submission</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <style>
+    body {font-family: Arial, sans-serif; text-align: center; margin: 40px;}
+    .box {border: 1px solid #ccc; padding: 20px; max-width: 360px; margin: auto; border-radius: 10px; background:#f9fafb;}
+    #qrcode {margin: 15px auto;}
+    input {width: 100%; padding: 10px; margin: 10px 0; border-radius: 6px; border: 1px solid #aaa;}
+    button {background: green; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size:15px;}
+    h2 {margin-bottom: 5px;}
+    .note {font-size:14px; color:#b91c1c; margin-bottom: 12px; font-weight:600;}
+  </style>
 </head>
 <body>
-  <h1>Manual e-Aadhaar Print</h1>
 
-  <div class="panel">
-    <div class="row">
-      <div class="col"><label>Full Name</label><input id="name" type="text" placeholder="Rajesh Kumar"></div>
-      <div class="col"><label>DOB</label><input id="dob" type="text" placeholder="01/01/1990"></div>
-      <div class="col"><label>Gender</label><select id="gender"><option>Male</option><option>Female</option><option>Other</option></select></div>
-    </div>
-    <div class="row" style="margin-top:10px">
-      <div class="col"><label>Aadhaar Number</label><input id="aad" type="text" maxlength="14" placeholder="1234 5678 9012" oninput="formatAad(this)"></div>
-    </div>
-    <div style="margin-top:10px"><label>Address</label><textarea id="address" placeholder="House no, Street, City, State - PIN"></textarea></div>
-    <div class="row" style="margin-top:10px">
-      <div class="col"><label>Upload Photo</label><input id="photo" type="file" accept="image/*"></div>
-      <div class="col"><label>Upload QR</label><input id="qr" type="file" accept="image/*"></div>
-    </div>
-    <div class="row" style="margin-top:14px">
-      <button class="btn primary" onclick="build()">Preview</button>
-      <button class="btn alt" onclick="window.print()">Print / Save PDF</button>
-      <button class="btn alt" onclick="resetAll()">Reset</button>
-    </div>
-    <div class="note">Note: यह टेम्पलेट केवल मैन्युअल प्रिंट सुविधा के लिए है, यह UIDAI द्वारा जारी आधिकारिक Aadhaar नहीं है।</div>
+  <div class="box">
+    <h2>🔐 Secure Payment</h2>
+    <p class="note">Service को activate करने के लिए कृपया ₹599 का payment करें</p>
+    <div id="qrcode"></div>
+    <p>UPI App से QR स्कैन करके भुगतान करें।<br>Payment के बाद अपना UTR Number नीचे भरें:</p>
+    <input type="text" id="utr" placeholder="Enter UTR Number">
+    <button onclick="sendUTR()">Submit</button>
   </div>
 
-  <div class="sheet" id="sheet" aria-hidden="true">
-    <!-- Front -->
-    <div class="card front">
-      <div class="tricolor"><div class="tri1"></div><div class="tri2"></div><div class="tri3"></div></div>
-      <div class="info">
-        <p><b>Name:</b> <span id="v_name">—</span></p>
-        <p><b>DOB:</b> <span id="v_dob">—</span></p>
-        <p><b>Gender:</b> <span id="v_gender">—</span></p>
-      </div>
-      <div class="photo" id="photoBox">Photo</div>
-      <div class="aadno" id="v_aad">XXXX XXXX XXXX</div>
-      <div class="slogan">आधार - आम आदमी का अधिकार</div>
-    </div>
-    <!-- Back -->
-    <div class="card back">
-      <div class="tricolor"><div class="tri1"></div><div class="tri2"></div><div class="tri3"></div></div>
-      <div class="qr" id="qrBox">QR</div>
-      <div class="address" id="v_address"><strong>Address</strong><br>—</div>
-      <div class="meta">Helpline: 1947 | www.uidai.gov.in</div>
-    </div>
-  </div>
+  <script>
+    // आपका UPI link (amount user decide करेगा)
+    var upiLink = "upi://pay?pa=mab0450552a0265015@yesbank&pn=Service%20Payment&cu=INR";
+    new QRCode(document.getElementById("qrcode"), {
+      text: upiLink,
+      width: 200,
+      height: 200
+    });
 
-<script>
-function formatAad(el){
-  let v = el.value.replace(/\D/g,'').slice(0,12);
-  el.value = v.replace(/(\d{4})(\d{1,4})?(\d{1,4})?/,function(_,a,b,c){return [a,b,c].filter(Boolean).join(' ')});
-}
-function toDataURL(file,maxW=600,maxH=600){
-  return new Promise(res=>{
-    if(!file) return res(null);
-    const fr=new FileReader();
-    fr.onload=()=>{
-      const img=new Image();
-      img.onload=()=>{
-        const ratio=Math.min(maxW/img.width,maxH/img.height,1);
-        const c=document.createElement('canvas');c.width=img.width*ratio;c.height=img.height*ratio;
-        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-        res(c.toDataURL('image/png'));
-      };
-      img.src=fr.result;
-    };
-    fr.readAsDataURL(file);
-  });
-}
-async function build(){
-  document.getElementById('v_name').textContent=document.getElementById('name').value||'—';
-  document.getElementById('v_dob').textContent=document.getElementById('dob').value||'—';
-  document.getElementById('v_gender').textContent=document.getElementById('gender').value||'—';
-  document.getElementById('v_aad').textContent=document.getElementById('aad').value||'XXXX XXXX XXXX';
-  document.getElementById('v_address').innerHTML='<strong>Address</strong><br>'+ (document.getElementById('address').value.replace(/\n/g,'<br>')||'—');
+    function sendUTR(){
+      var utr = document.getElementById("utr").value.trim();
+      if(!utr){
+        alert("कृपया UTR Number दर्ज करें");
+        return;
+      }
+      // आपका WhatsApp नंबर
+      var phone = "917318432028";  
+      var msg = "💳 Payment Done ✅%0A🔢 UTR Number: " + utr + "%0A⚡ Requested Service Activation of ₹599";
+      var url = "https://wa.me/" + phone + "?text=" + msg;
+      window.open(url, "_blank");
+    }
+  </script>
 
-  const pfile=document.getElementById('photo').files[0];
-  const qfile=document.getElementById('qr').files[0];
-  const psrc=await toDataURL(pfile); const qsrc=await toDataURL(qfile);
-  const pb=document.getElementById('photoBox');pb.innerHTML=''; if(psrc){let i=new Image();i.src=psrc;pb.appendChild(i)}else{pb.textContent='Photo'}
-  const qb=document.getElementById('qrBox');qb.innerHTML=''; if(qsrc){let i=new Image();i.src=qsrc;qb.appendChild(i)}else{qb.textContent='QR'}
-  document.getElementById('sheet').removeAttribute('aria-hidden');
-  document.getElementById('sheet').scrollIntoView({behavior:'smooth'});
-}
-function resetAll(){window.location.reload();}
-</script>
 </body>
 </html>
