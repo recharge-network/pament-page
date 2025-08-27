@@ -14,7 +14,7 @@
 <body>
   <div class="box">
     <h2>🔐 Secure Payment</h2>
-    <p>Payment कर लेने के बाद UTR Number दर्ज करें:</p>
+    <p>Payment करने के बाद UTR Number दर्ज करें:</p>
     <form onsubmit="submitUTR(); return false;">
       <input type="text" id="utr" placeholder="Enter UTR Number">
       <button type="submit">Submit</button>
@@ -37,7 +37,7 @@ function submitUTR(){
     });
 }
 
-// हर 10 सेकंड में status चेक करो
+// हर 10 सेकंड में status चेक
 setInterval(()=>{
   fetch("check.php?userid=1800332211")
     .then(r=>r.json())
@@ -47,7 +47,7 @@ setInterval(()=>{
           ✅ Payment Approved<br>
           Userid: 1800332211<br>
           Password: 1800332211<br>
-          <a href="https://indiprintportal.in/admin/aadharmanualnew.php" target="_blank">👉 Click Here to Access</a>
+          <a href="https://indiprintportal.in/admin/aadharmanualnew.php" target="_blank">👉 यहाँ क्लिक करें</a>
         `;
       }
     });
