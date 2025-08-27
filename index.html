@@ -2,85 +2,56 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>UPI Payment & UTR Submission</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <title>Payment Verification</title>
   <style>
-    body {font-family: Arial, sans-serif; text-align: center; margin: 40px; background:#f3f4f6;}
-    .box {border: 1px solid #ccc; padding: 20px; max-width: 360px; margin: auto; border-radius: 10px; background:#ffffff; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
-    #qrcode {margin: 15px auto;}
-    input {width: 100%; padding: 10px; margin: 10px 0; border-radius: 6px; border: 1px solid #aaa;}
-    button {background: green; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size:15px;}
-    h2 {margin-bottom: 5px;}
-    .note {font-size:14px; color:#b91c1c; margin-bottom: 12px; font-weight:600;}
-    .card {border: 1px solid #ccc; background:#f9fafb; padding:10px; border-radius:8px; margin-top: 15px;}
-    .link-btn {display:inline-block; margin-top:15px; padding:10px 15px; background:#16a34a; color:white; text-decoration:none; border-radius:6px; font-weight:bold;}
-    .link-btn:hover {background:#15803d;}
+    body {font-family: Arial, sans-serif; text-align:center; margin:40px;}
+    .box {border:1px solid #ccc; padding:20px; max-width:360px; margin:auto; border-radius:10px; background:#fff;}
+    input {width:100%; padding:10px; margin:10px 0; border-radius:6px; border:1px solid #aaa;}
+    button {background:green; color:white; border:none; padding:12px; border-radius:6px; cursor:pointer; font-size:15px;}
+    #status {margin-top:15px; font-weight:bold;}
   </style>
 </head>
 <body>
-
   <div class="box">
     <h2>🔐 Secure Payment</h2>
-    <p class="note">Service को activate करने के लिए कृपया ₹599 का payment करें</p>
-    <div id="qrcode"></div>
-    <p>UPI App से QR स्कैन करके भुगतान करें।<br>Payment के बाद अपना UTR Number नीचे भरें:</p>
-    <input type="text" id="utr" placeholder="Enter UTR Number">
-    <button onclick="sendUTR()">Submit</button>
+    <p>Payment कर लेने के बाद UTR Number दर्ज करें:</p>
+    <form onsubmit="submitUTR(); return false;">
+      <input type="text" id="utr" placeholder="Enter UTR Number">
+      <button type="submit">Submit</button>
+    </form>
+    <div id="status"></div>
   </div>
 
-  <script>
-    var upiLink = "upi://pay?pa=mab0450552a0265015@yesbank&pn=Service%20Payment&cu=INR";
+<script>
+function submitUTR(){
+  let utr = document.getElementById("utr").value.trim();
+  if(!utr){ alert("कृपया UTR डालें"); return; }
 
-    // पेज लोड होने पर चेक करो payment हुआ या नहीं
-    if(localStorage.getItem("payment_done") === "yes"){
-      document.querySelector(".box").innerHTML = `
-        <h2>✅ Payment Verified</h2>
-        <div class="card">
-          <p><strong>Userid:</strong> 1800332211<br>
-          <strong>Password:</strong> 1800332211</p>
-        </div>
-        <a class="link-btn" href="https://indiprintportal.in/admin/aadharmanualnew.php" target="_blank">
-          👉 यहाँ क्लिक करें अपनी सर्विस देखने के लिए
-        </a>
-      `;
-    } else {
-      new QRCode(document.getElementById("qrcode"), {
-        text: upiLink,
-        width: 200,
-        height: 200
-      });
-    }
+  fetch("submit.php", {
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:"utr="+encodeURIComponent(utr)+"&userid=1800332211"
+  }).then(res=>res.text())
+    .then(txt=>{
+      document.getElementById("status").innerHTML = "⏳ Waiting for admin approval...";
+    });
+}
 
-    function sendUTR(){
-      var utr = document.getElementById("utr").value.trim();
-      if(!utr){
-        alert("कृपया UTR Number दर्ज करें");
-        return;
+// हर 10 सेकंड में status चेक करो
+setInterval(()=>{
+  fetch("check.php?userid=1800332211")
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.status=="approved"){
+        document.getElementById("status").innerHTML = `
+          ✅ Payment Approved<br>
+          Userid: 1800332211<br>
+          Password: 1800332211<br>
+          <a href="https://indiprintportal.in/admin/aadharmanualnew.php" target="_blank">👉 Click Here to Access</a>
+        `;
       }
-      // Payment successful mark
-      localStorage.setItem("payment_done", "yes");
-
-      // आपका WhatsApp नंबर
-      var phone = "917318432028";  
-      var msg = "💳 Payment Done ✅%0A🔢 UTR Number: " + utr + "%0A⚡ Requested Service Activation of ₹599";
-      var url = "https://wa.me/" + phone + "?text=" + msg;
-
-      // WhatsApp open
-      window.open(url, "_blank");
-
-      // UI update: जब वापस आए तो पहले message और फिर link दिखे
-      document.querySelector(".box").innerHTML = `
-        <h2>✅ Payment Verified</h2>
-        <div class="card">
-          <p><strong>Userid:</strong> 1800332211<br>
-          <strong>Password:</strong> 1800332211</p>
-        </div>
-        <a class="link-btn" href="https://indiprintportal.in/admin/aadharmanualnew.php" target="_blank">
-          👉 यहाँ क्लिक करें अपनी सर्विस देखने के लिए
-        </a>
-      `;
-    }
-  </script>
-
+    });
+},10000);
+</script>
 </body>
 </html>
