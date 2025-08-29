@@ -7,12 +7,13 @@ $userid = $_POST['userid'];
 // DB में save
 $conn->query("INSERT INTO utr_requests (userid,utr,status) VALUES ('$userid','$utr','pending')");
 
-// आपका WhatsApp नंबर (country code के साथ)
+// WhatsApp number
 $phone = "917318432028"; 
 
-// WhatsApp Message
+// Message
 $msg = "💳 New Payment Request%0A🔢 UserID: $userid%0A📌 UTR: $utr%0A⏳ Waiting for Admin Approval";
 
-// WhatsApp पर redirect
-echo "<script>window.location.href='https://wa.me/$phone?text=$msg';</script>";
+// Redirect WhatsApp
+header("Location: https://wa.me/$phone?text=$msg");
+exit;
 ?>
