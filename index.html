@@ -3,18 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Payment Verification</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
   <style>
-    body {font-family: Arial, sans-serif; text-align:center; margin:40px;}
+    body {font-family: Arial, sans-serif; text-align:center; margin:40px; background:#f3f4f6;}
     .box {border:1px solid #ccc; padding:20px; max-width:360px; margin:auto; border-radius:10px; background:#fff;}
     input {width:100%; padding:10px; margin:10px 0; border-radius:6px; border:1px solid #aaa;}
     button {background:green; color:white; border:none; padding:12px; border-radius:6px; cursor:pointer; font-size:15px;}
     #status {margin-top:15px; font-weight:bold;}
+    #qrcode {margin:15px auto;}
   </style>
 </head>
 <body>
   <div class="box">
     <h2>🔐 Secure Payment</h2>
-    <p>Payment करने के बाद UTR Number दर्ज करें:</p>
+    <p>Service को एक्टिव करने के लिए ₹599 का भुगतान करें</p>
+    
+    <!-- QR Code -->
+    <div id="qrcode"></div>
+    <p>QR को किसी भी UPI App (PhonePe, GPay, Paytm) से स्कैन करें और Payment करें</p>
+    
+    <!-- UTR Form -->
     <form onsubmit="submitUTR(); return false;">
       <input type="text" id="utr" placeholder="Enter UTR Number">
       <button type="submit">Submit</button>
@@ -23,6 +31,15 @@
   </div>
 
 <script>
+// ---- QR Code Generate ----
+var upiLink = "upi://pay?pa=mab0450552a0265015@yesbank&pn=Service%20Payment&am=599&cu=INR";
+new QRCode(document.getElementById("qrcode"), {
+    text: upiLink,
+    width: 200,
+    height: 200
+});
+
+// ---- Submit UTR ----
 function submitUTR(){
   let utr = document.getElementById("utr").value.trim();
   if(!utr){ alert("कृपया UTR डालें"); return; }
@@ -37,7 +54,7 @@ function submitUTR(){
     });
 }
 
-// हर 10 सेकंड में status चेक
+// ---- हर 10 सेकंड में status check ----
 setInterval(()=>{
   fetch("check.php?userid=1800332211")
     .then(r=>r.json())
