@@ -7,14 +7,8 @@
   <style>
     body {font-family: Arial, sans-serif; text-align:center; margin:40px; background:#f3f4f6;}
     .box {border:1px solid #ccc; padding:20px; max-width:360px; margin:auto; border-radius:10px; background:#fff; position: relative;}
-    /* Admin button */
-    .admin-btn {
-      position:absolute; top:12px; right:12px;
-      background:#111827; color:#fff; border:none; padding:8px 12px;
-      border-radius:6px; font-size:13px; cursor:pointer; text-decoration:none; display:inline-block;
-    }
-    .admin-btn:hover {opacity:0.9;}
-    h2 {margin-top:28px;} /* button ke liye thoda space */
+    .admin-btn {position:absolute; top:12px; right:12px; background:#111827; color:#fff; border:none; padding:8px 12px; border-radius:6px; font-size:13px; cursor:pointer; text-decoration:none;}
+    h2 {margin-top:28px;}
     input {width:100%; padding:10px; margin:10px 0; border-radius:6px; border:1px solid #aaa;}
     button {background:green; color:white; border:none; padding:12px; border-radius:6px; cursor:pointer; font-size:15px;}
     #status {margin-top:15px; font-weight:bold;}
@@ -23,49 +17,30 @@
 </head>
 <body>
   <div class="box">
-    <!-- 👇 QR ke paas, sabse upar Admin Login button -->
-    <a class="admin-btn" href="admin-login.php" target="_blank" rel="noopener">ADMIN LOGIN</a>
+    <a class="admin-btn" href="admin-login.php" target="_blank">ADMIN LOGIN</a>
 
     <h2>🔐 Secure Payment</h2>
     <p>Service को एक्टिव करने के लिए ₹599 का भुगतान करें</p>
 
-    <!-- QR Code -->
     <div id="qrcode"></div>
-    <p>QR को किसी भी UPI App (PhonePe, GPay, Paytm) से स्कैन करें और Payment करें</p>
+    <p>QR को किसी भी UPI App से स्कैन करके Payment करें</p>
 
-    <!-- UTR Form -->
-    <form onsubmit="submitUTR(); return false;">
-      <input type="text" id="utr" placeholder="Enter UTR Number">
+    <!-- अब form सीधे submit.php पर जाएगा -->
+    <form action="submit.php" method="post">
+      <input type="hidden" name="userid" value="1800332211">
+      <input type="text" name="utr" placeholder="Enter UTR Number">
       <button type="submit">Submit</button>
     </form>
-    <div id="status"></div>
+
+    <div id="status">⏳ Waiting for admin approval...</div>
   </div>
 
 <script>
-// ---- QR Code Generate ----
+// QR Code Generate
 var upiLink = "upi://pay?pa=mab0450552a0265015@yesbank&pn=Service%20Payment&am=599&cu=INR";
-new QRCode(document.getElementById("qrcode"), {
-  text: upiLink,
-  width: 200,
-  height: 200
-});
+new QRCode(document.getElementById("qrcode"), { text: upiLink, width: 200, height: 200 });
 
-// ---- Submit UTR ----
-function submitUTR(){
-  let utr = document.getElementById("utr").value.trim();
-  if(!utr){ alert("कृपया UTR डालें"); return; }
-
-  fetch("submit.php", {
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:"utr="+encodeURIComponent(utr)+"&userid=1800332211"
-  }).then(res=>res.text())
-    .then(()=>{
-      document.getElementById("status").innerHTML = "⏳ Waiting for admin approval...";
-    });
-}
-
-// ---- हर 10 सेकंड में status check ----
+// हर 10 सेकंड में status चेक
 setInterval(()=>{
   fetch("check.php?userid=1800332211")
     .then(r=>r.json())
